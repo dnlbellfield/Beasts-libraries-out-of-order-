@@ -1,3 +1,5 @@
+
+
 <script src="simpletest.js" type="text/javascript"></script>
 <script type="text/javascript">
 	
@@ -60,5 +62,74 @@
 	root['librarySystem'] = librarySystem;
 
 }(this));
+
+tests({
+ 
+'It should take a libraryName and callback function that stores the library and returns it': function() {
+  	librarySystem('app', [], function() {
+  		return 'loaded app';
+  	});
+
+  	eq(librarySystem('app'), 'loaded app');
+  },
+  'It should load the libraries out of order' : function() {
+	librarySystem('workBlurb', ['name', 'company'], function(name, company) {
+		return name + ' works at ' + company;
+	});
+
+	librarySystem('name', [], function() {
+		return 'Gordon';
+	});
+
+	librarySystem('company', [], function() {
+		return 'Watch and Code';
+	});
+
+	var returnedLibrary = librarySystem('workBlurb'); // 'Gordon works at Watch and Code'
+	eq(returnedLibrary,'Gordon works at Watch and Code' );
+  },
+  
+  'It should take a dependency and pass it into callback function and return it with the library': function(){
+  	librarySystem('helper', [], function() { return 'helper'});
+  	librarySystem('mainApp', ['helper'], function( helper) {
+  		return 'The mainApp uses ' + helper});
+  	
+  	var returnedLibrary = librarySystem('mainApp');
+  	eq(returnedLibrary, "The mainApp uses helper");
+  	
+  },
+ 
+'It should take an array of dependencies, pass into callback function and return it with the library': function() {
+	librarySystem('name', [], function() {
+	  	return 'Gordon';
+		});
+
+		librarySystem('company', [], function() {
+	  	return 'Watch and Code';
+		});
+
+		librarySystem('workBlurb', ['name', 'company'], function(name, company) {
+	  	return name + ' works at ' + company;
+		});	
+
+  	var returnedLibrary = librarySystem('workBlurb');
+  	eq(returnedLibrary, 'Gordon works at Watch and Code');
+  }
+ 
+ });	
 </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
